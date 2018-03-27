@@ -512,6 +512,14 @@ class RemotingService(object):
             for k, v in data.iteritems():
                 self.headers[k] = v
 
+        setcookies = http_message.getallmatchingheaders('Set-Cookie')
+        if len(setcookies) > 0:
+            if 'Cookie' not in self.http_headers:
+                self.http_headers['Cookie'] = ''
+            for setcookie in setcookies:
+                new_cookie = setcookie.strip()[11:].split(';')[0].strip()
+                self.http_headers['Cookie'] = new_cookie + '; ' + self.http_headers['Cookie']
+
         return response
 
     def setCredentials(self, username, password):
